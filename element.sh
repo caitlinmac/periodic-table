@@ -4,34 +4,42 @@ PSQL="psql --username=freecodecamp --dbname=periodic_table -t --no-align -c"
 #if argument is not provided:
 if [[ -z $1 ]]
 then
-echo NO ARG
-echo Please provide an element as an argument.
-fi 
-
-ARG_NO=$($PSQL "SELECT atomic_number FROM elements WHERE atomic_number=$1;")
-ARG_SYM=$($PSQL "SELECT atomic_number FROM elements WHERE symbol='$1';")
-ARG_NAME=$($PSQL "SELECT atomic_number FROM elements WHERE name='$1';")
-
-#pipe error message? I know if wont exist for all of them but need to check!
-
-if [[ -z $ARG_NO && $ARG_SYM && $ARG_NAME ]]
-then
-echo I could not find that element in the database.
+  echo Please provide an element as an argument.
+# otherwise an argument is provided
 else
-#if argument is provided:
-ARG=$ARG_NO$ARG_SYM$ARG_NAME
-echo $ARG
-if [[ ]]
-$($PSQL "SELECT atomic_number FROM elements WHERE name='$1'";)
-
-#Retrieve atomic_number, name, symbol, type, mass, melting point, boiling point. 
-## What was that thing we did where we could pull the full row and assign it to var?
-
-#Input that info into the sentence: The element with atomic number <atomic_number>  is <name> 
-#(<symbol>) with a mass of <atomic_mass> amu. <name> has a melting point of <melting_point>
-#celsius and a boiling point of <boiling point> celsius.
-
+  ##FIX NEEDED: ERROR MESSAGE PRINTING TO TERMINAL WHEN NOT MATCHED
+  ARG_NO=$($PSQL "SELECT atomic_number FROM elements WHERE atomic_number=$1;")
+  ARG_SYM=$($PSQL "SELECT atomic_number FROM elements WHERE symbol='$1';")
+  ARG_NAME=$($PSQL "SELECT atomic_number FROM elements WHERE name='$1';")
+  
+  # if an argument is not matched with database
+  if [[ -z $ARG_NO && $ARG_SYM && $ARG_NAME ]]
+  then
+    echo I could not find that element in the database.
+  
+  # if argument is provided that matches database
+  else
+    ARG=$ARG_NO$ARG_SYM$ARG_NAME
+    echo $ARG
+    #if argument provided is atomic number
+    if [[ $ARG_NO == $1 ]]
+    then
+      ATOMIC_NO=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM elements FULL JOIN properties USING(atomic_number) FULL JOIN types USING(type_id) WHERE atomic_number=$1;")
+      echo "$ATOMIC_NO"
+      ##FIX NEEDED: NOT PIPING INTO THE VARIABLES!
+      echo $ATOMIC_NO | read NUM BAR NAME BAR SYMBOL BAR TYPE BAR MASS BAR MELT BAR BOIL BAR TYPE 
+      echo $NUM $SYMBOL $NAME $MASS $MELT
+      echo "The element with atomic number $NUM is $NAME ($SYMBOL). It's a $TYPE, with a mass of $MASS amu. $NAME has a melting point of $MELT celsius and a boiling point of $BOIL celsius."
+  #if argument provided is symbol
+    elif [[ $ARG_SYM == $1 ]]
+    then
+      echo Symbol!
+      ATOMIC_NO=$($PSQL "SELECT atomic_number FROM elements WHERE symbol='$1';")
+  #if argument provided is name
+    elif [[ $ARG_NAME == $1 ]]
+    then
+      echo Name!
+      ATOMIC_NO=$($PSQL "SELECT atomic_number FROM elements WHERE name='$1';")
+    fi
+  fi
 fi
-
-
-
