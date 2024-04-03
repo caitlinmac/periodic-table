@@ -24,23 +24,6 @@ echo $ARG
 if [[ ]]
 $($PSQL "SELECT atomic_number FROM elements WHERE name='$1'";)
 
-
-ATOMIC_NO=
-NAME=
-SYMBOL
-
-
-fi
-#else if [[ -z
-#If element is not valid
-
-#Identify element by querying it by atomic_number OR symbol OR name
-#$($PSQL "SELECT * FROM 
-
-
-
-#Identify element by querying it by atomic_number OR symbol OR name
-
 #Retrieve atomic_number, name, symbol, type, mass, melting point, boiling point. 
 ## What was that thing we did where we could pull the full row and assign it to var?
 
@@ -48,5 +31,7 @@ fi
 #(<symbol>) with a mass of <atomic_mass> amu. <name> has a melting point of <melting_point>
 #celsius and a boiling point of <boiling point> celsius.
 
-#if argument input does not match database, output "I could not find that element in teh database.
+fi
+
+
 
