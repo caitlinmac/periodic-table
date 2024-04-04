@@ -6,8 +6,16 @@ if [[ -z $1 ]]
 then
   echo Please provide an element as an argument.
 
-#or if argument does not match number, symbol or name
-elif
+#or if argument is a number but does not match symbol or name
+elif [[ $1 =~ [0-9]+ && -z $($PSQL "SELECT atomic_number FROM elements WHERE atomic_number=$1;") ]]
+then
+echo I could not find that element in the database.
+
+#or if argument is a symbol or name but does not match symbol or name
+elif [[ $1 =~ [A-Z][a-z]+ &&-z $($PSQL "SELECT atomic_number FROM elements WHERE name='$1';") && -z $($PSQL "SELECT atomic_number FROM elements WHERE symbol='$1';") ]]
+then 
+echo I could not find that element in the database.
+
 
 # otherwise an argument is provided AND is a digit
 elif [[ $1 =~ [0-9]+ ]]
