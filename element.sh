@@ -20,7 +20,6 @@ echo I could not find that element in the database.
 # otherwise an argument is provided AND is a digit
 elif [[ $1 =~ [0-9]+ ]]
 then
-  echo "atomic number!"
   ATOMIC_NO=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM elements FULL JOIN properties USING(atomic_number) FULL JOIN types USING(type_id) WHERE atomic_number=$1;") 
        # Set IFS to tab character
        IFS=$'|'
@@ -32,7 +31,6 @@ then
 # if argument is > 3 letters, it must be a name
   elif [[ $1 =~ [A-Z][a-z][a-z][a-z]+ ]]
   then
-  echo "name!"
   ATOMIC_NO=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM elements FULL JOIN properties USING(atomic_number) FULL JOIN types USING(type_id) WHERE name='$1';") 
        # Set IFS to tab character
        IFS=$'|'
@@ -43,8 +41,7 @@ then
 
 # if argument is 3 letters or less, it must be a symbol
   elif [[ $1 =~ [A-Z][a-z]*[a-z]* ]]
-  then 
-  echo "symbol!"
+  then
     ATOMIC_NO=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM elements FULL JOIN properties USING(atomic_number) FULL JOIN types USING(type_id) WHERE symbol='$1';") 
        # Set IFS to tab character
        IFS=$'|'
